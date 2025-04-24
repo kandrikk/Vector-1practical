@@ -1,7 +1,7 @@
 CXX = g++
 MAIN_TARGET = main
 TEST_TARGET = vector_test
-SRC = SRC/Vector.cpp
+SRC = src/Vector.cpp
 FLAGS = -L. -lVectorTest
 
 all: $(MAIN_TARGET) $(TEST_TARGET)

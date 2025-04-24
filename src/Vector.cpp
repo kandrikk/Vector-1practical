@@ -135,21 +135,16 @@ void Vector::pushFront(const ValueType& value)
 {
     if (_size == _capacity)
     {
-        if (_capacity == 0)
-        {
-            _capacity = 1;
-        }
-        _capacity = _capacity * _multiplicativeCoef;
-
-        ValueType* new_data = new ValueType[_capacity];
+        size_t new_capacity = _capacity == 0 ? 1 : _capacity * _multiplicativeCoef;
+        ValueType* new_data = new ValueType[new_capacity];
 
         for (size_t i = 0; i < _size; ++i)
         {
             new_data[i + 1] = _data[i];
         }
-
-         delete[] _data;
-         _data = new_data;
+        delete[] _data;
+        _data = new_data;
+        _capacity = new_capacity;
     }
     else
     {
@@ -289,9 +284,6 @@ void Vector::insert(const Vector& vector, size_t pos)
     }
 };
 
-
-
-
 	//! Удаление с конца
 void Vector::popBack()
 {
@@ -317,8 +309,6 @@ void Vector::popFront()
         std::cout << "Ошибка: PopFront(_size <= 0)\n";
     }
 };
-
-
 
 	//! Количество элементов
 size_t Vector::size() const
@@ -440,7 +430,7 @@ int main() {
     Vector v5;
     v5.pushFront(1.1);
     v5.pushBack(5.5);
-    v5.insert(v4, 0);
+    v5.insert(v4, 1);
     std::cout << "//! Вставка содержимого вектора в позицию pos v5: \n";
     for (size_t i = 0; i < v5.size(); ++i){
         std::cout << v5[i] << "  ";
