@@ -403,20 +403,49 @@ const ValueType& Vector::operator[](size_t idx) const
     //! \return - индекс элемента
 long long Vector::find(const ValueType& value) const
 {
-    
-}
+    if (_size == 0)
+    {
+        std::cout << "Ошибка, вектор не имеет значений\n";
+        return -1;
+    }
+
+    for (size_t i = 0; i < _size; ++i)
+    {
+        if (_data[i] == value)
+        {
+            return static_cast<long long>(i);
+        }
+    } 
+    std::cout << "Элемента нет в векторе\n";
+    return -1;
+};
+
+    //! Если capacity > _capacity, то выделить новый участок памяти размером capacity и перенести вектор туда, иначе - ничего
+void Vector::reserve(size_t capacity)
+{
+    if (capacity > _capacity)
+    {
+        _capacity = capacity;
+    }
+};
+
+	//! Уменьшить capacity до size
+void Vector::shrinkToFit()
+{
+    _capacity = _size;
+};
 
 int main() {
 
     //! Конструктор без параметров
     Vector v1;
-    std::cout << "\nКонструктор без параметров. \nVector v1 created successfully!\n";
+    std::cout << "\nVector v1 created successfully!\n";
     std::cout << "=====================================================================\n";
 
     //! Конструктор с параметрами
     double arr[] = {1.1, 2.2, 3.3};
     Vector v2(arr, 3);
-    std::cout << "Конструктор с параметрами \nv2: \n";
+    std::cout << "Конструктор с параметрами \nv2: ";
     for (size_t i = 0; i < v2.size(); ++i){
         std::cout << v2[i] << "  ";
     }
@@ -425,7 +454,7 @@ int main() {
 
     //Копирование
     Vector v3(v2);
-    std::cout << "Копирование \nv3: \n";
+    std::cout << "Копирование \nv3: ";
     for (size_t i = 0; i < v3.size(); ++i){
         std::cout << v2[i] << "  ";
     }
@@ -434,7 +463,7 @@ int main() {
 
     //PUSHBACK
     v3.pushBack(4.4);
-    std::cout << "PushBack '4.4' in v3: \n";
+    std::cout << "PushBack '4.4' in v3: ";
     for (size_t i = 0; i < v3.size(); ++i){
         std::cout << v3[i] << "  ";
     }
@@ -443,7 +472,7 @@ int main() {
 
     //PUSHFRONT
     v3.pushFront(5.5);
-    std::cout << "Pushfront '5.5' in v3: \n";
+    std::cout << "Pushfront '5.5' in v3: ";
     for (size_t i = 0; i < v3.size(); ++i){
         std::cout << v3[i] << "  ";
     }
@@ -452,7 +481,7 @@ int main() {
 
     //POPBACK
     v3.popBack();
-    std::cout << "PopBack in v3: \n";
+    std::cout << "PopBack in v3: ";
     for (size_t i = 0; i < v3.size(); ++i){
         std::cout << v3[i] << "  ";
     }
@@ -461,7 +490,7 @@ int main() {
 
     //POPBACK
     v3.popFront();
-    std::cout << "PopFront in v3: \n";
+    std::cout << "PopFront in v3: ";
     for (size_t i = 0; i < v3.size(); ++i){
         std::cout << v3[i] << "  ";
     }
@@ -470,7 +499,7 @@ int main() {
 
     ////! Вставка элемента value в позицию pos
     v3.insert(2.5, 2);
-    std::cout << "Вставка элемента value в позицию pos v3: \n";
+    std::cout << "Вставка элемента value в позицию pos v3: ";
     for (size_t i = 0; i < v3.size(); ++i){
         std::cout << v3[i] << "  ";
     }
@@ -520,11 +549,27 @@ int main() {
     std::cout << std::endl;
     v5.insert(v4, 1);
     std::cout << "=====================================================================\n";
-    std::cout << "size v5\t\t|" << v5.size() << "\n";
+
+    //SIZE      CAPACITY        LOADFACTOR      SHRINKFIT       RESERVE
+    std::cout << "size v5\t\t\t\t\t| " << v5.size() << "\n";
     std::cout << "=====================================================================\n";
-    std::cout << "capacity v5\t|" << v5.capacity() << "\n";
+
+    std::cout << "capacity v5\t\t\t\t| " << v5.capacity() << "\n";
     std::cout << "=====================================================================\n";
-    std::cout << "loadFactor v5\t|" << v5.loadFactor() << "\n";
+
+    std::cout << "loadFactor v5\t\t\t\t| " << v5.loadFactor() << "\n";
     std::cout << "=====================================================================\n";
+
+    std::cout << "Индекс первого вхождения '3.3' в v5\t| " << v5.find(3.3) << "\n";
+    std::cout << "=====================================================================\n";
+
+    v5.shrinkToFit();
+    std::cout << "v5.shrinkToFit\t\t\t\t|" <<  " Capacity = " << v5.capacity() << "\n";
+    std::cout << "=====================================================================\n";
+
+    v5.reserve(10);
+    std::cout << "v5.reserve\t\t\t\t|" << " Capacity = " << v5.capacity() << "\n";
+    std::cout << "=====================================================================\n";
+
     return 0;
 }
