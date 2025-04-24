@@ -310,12 +310,74 @@ void Vector::popFront()
     }
 };
 
+    /*!
+        \brief Удалить элемент(ы) из вектора
+        \param pos: позиция начала удаляемого участка
+        \param count: количество удаляемых элементов
+        если (pos + count) > size, то элементы интервала [pos, size) должны быть удалены
+    */
+void Vector::erase(size_t pos, size_t count)
+{
+    if (pos >= _size)
+    {
+        std::cout << "Ошибка [pos >= _size]\n";
+        return;
+    }
+
+    count = std::min(count, _size - pos);
+
+    for (size_t i = pos; i < _size - count; ++i) 
+    {
+        _data[i] = std::move(_data[i + count]);
+    }
+
+    _size -= count;
+};
+
+    /*!
+        \brief Удалить элемент(ы) из вектора
+        \param beginPos: позиция начала удаляемого участка
+        \param endPos: позиция окончания удаляемого участка
+        Все элементы интервала [beginPos, endPos) должны быть удалены:
+            [1, 2, 3, 4] -> erase(1, 3) -> [1, 4]
+        если endPos > size, то элементы интервала [beginPos, size) должны быть удалены
+    */
+   void Vector::eraseBetween(size_t beginPos, size_t endPos) 
+   {
+    if (beginPos >= _size || beginPos >= endPos) {
+        std::cout << "Ошибка [beginPos >= _size || beginPos >= endPos]\n";
+        return;
+    }
+
+    endPos = std::min(endPos, _size);
+
+    size_t count = endPos - beginPos + 1;
+
+    for (size_t i = beginPos; i < _size - count; ++i) {
+        _data[i] = std::move(_data[i + count]);
+    }
+
+    _size -= count;
+};
+
 	//! Количество элементов
 size_t Vector::size() const
 {
     return _size;
 };
+	//! Максимальное количество элементов
+size_t Vector::capacity() const
+{
+    return _capacity;
+};
 
+	//! Фактор загруженности
+double Vector::loadFactor() const
+{
+    if (_capacity == 0) {return 0.0;}
+    double tmp = double(_size) / double(_capacity);
+    return tmp;
+};
 
     //! Доступ к элементу по индексу
 ValueType& Vector::operator[](size_t idx)
@@ -337,9 +399,12 @@ const ValueType& Vector::operator[](size_t idx) const
     return _data[idx];
 };
 
-
-
-
+    //! Поиск первого вхождения значения
+    //! \return - индекс элемента
+long long Vector::find(const ValueType& value) const
+{
+    
+}
 
 int main() {
 
@@ -438,5 +503,28 @@ int main() {
     std::cout << std::endl;
     std::cout << "=====================================================================\n";
 
+    v5.erase(1, 3);
+    std::cout << "Удалить элемент(ы) из вектора v5: \n";
+    for (size_t i = 0; i < v5.size(); ++i){
+        std::cout << v5[i] << "  ";
+    }
+    std::cout << std::endl;
+    v5.insert(v4, 1);
+    std::cout << "=====================================================================\n";
+
+    v5.eraseBetween(1, 3);
+    std::cout << "eraseBetween v5: \n";
+    for (size_t i = 0; i < v5.size(); ++i){
+        std::cout << v5[i] << "  ";
+    }
+    std::cout << std::endl;
+    v5.insert(v4, 1);
+    std::cout << "=====================================================================\n";
+    std::cout << "size v5\t\t|" << v5.size() << "\n";
+    std::cout << "=====================================================================\n";
+    std::cout << "capacity v5\t|" << v5.capacity() << "\n";
+    std::cout << "=====================================================================\n";
+    std::cout << "loadFactor v5\t|" << v5.loadFactor() << "\n";
+    std::cout << "=====================================================================\n";
     return 0;
 }
