@@ -10,6 +10,10 @@ using ValueType = double;
 class Vector
 {
 public:
+
+    // HELPERS
+    void printVec() const;
+    // HELPERS
     /*!
         \note Все конструкторы и операторы присваивания, 
 		кроме конструктора и оператора присваивания перемещением 
