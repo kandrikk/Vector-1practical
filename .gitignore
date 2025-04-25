@@ -1,4 +1,3 @@
 *.o
 vector_test
 main
-ai.cpp
