@@ -182,34 +182,41 @@ Vector::Iterator Vector::end()
 // ======================================================================================================================
 // FUNCTION
 
-void Vector::printVec() const {  // Добавлен const, так как метод не изменяет вектор
+void Vector::printVec() const {  // HELPERS Вывод вектора
     std::cout << "{ ";
-    for (size_t i = 0; i < _size; ++i) {  // Используем size_ вместо vector.size()
-        std::cout << _data[i];            // Используем data_ вместо vector[i]
-        if (i != _size - 1) {             // Добавляем разделитель, кроме последнего элемента
+    for (size_t i = 0; i < _size; ++i) {  
+        std::cout << _data[i];            
+        if (i != _size - 1) {             
             std::cout << ", ";
         }
     }
-    std::cout << " }" << std::endl;       // Фигурная скобка и перенос строки
+    std::cout << " }" << std::endl;       
 }
 
-size_t Vector::size() const
+void Vector::clear() {
+    delete[] _data;
+    _data = nullptr;
+    _size = 0;
+    _capacity = 0;
+}
+
+size_t Vector::size() const // Количество элементов вектора
 {
     return _size;
 };
 
-size_t Vector::capacity() const
+size_t Vector::capacity() const // Сколько памяти занимает вектор
 {
     return _capacity;
 };
 
-double Vector::loadFactor() const
+double Vector::loadFactor() const // Фактор загруженности 
 {
     if (_capacity == 0) {return 0.0;};
     return double(_size) / double(_capacity);
 };
 
-void Vector::shrinkToFit()
+void Vector::shrinkToFit() // Уменьшение памяти до size
 {
     if (_size == _capacity) {return;}
 
@@ -232,3 +239,211 @@ void Vector::shrinkToFit()
     _capacity = _size;
 };
 
+void Vector::pushBack(const ValueType& value) // Добавление элемента в конец вектора
+{
+    if (_size >= _capacity)
+    {
+        size_t new_capacity = (_capacity == 0) ? 1 : static_cast<size_t>(_capacity * _multiplicativeCoef);
+
+        ValueType* new_data = new ValueType[new_capacity];
+        if (_data != nullptr)
+        {
+            for (size_t i = 0; i < _size; ++i)
+            {
+                new_data[i] = _data[i];
+            }
+        }
+        delete[] _data;
+        _data = new_data;
+        _capacity = new_capacity;
+    }
+    _data[_size] = value;
+    ++_size;
+};
+
+void Vector::pushFront(const ValueType& value) // Добавление элемента в начало вектора
+{
+    if (_size >= _capacity)
+    {
+        size_t new_capacity = (_capacity == 0) ? 1 : static_cast<size_t>(_capacity * _multiplicativeCoef);
+
+        ValueType* new_data = new ValueType[new_capacity];
+        if (_data != nullptr)
+        {
+            for (size_t i = 0; i < _size; ++i)
+            {
+                new_data[i + 1] = _data[i];
+            }
+        }
+        delete[] _data;
+        _data = new_data;
+        _capacity = new_capacity;
+    } 
+    else
+    {
+        for (size_t i = _size; i > 0; --i)
+        {
+            _data[i] = _data[i - 1];
+        }
+    }
+    _data[0] = value;
+    ++_size; 
+};
+
+void Vector::insert(const ValueType& value, size_t pos) // Вставка элемента value в позицию pos
+{
+    if (pos > _size)
+    {
+        std::cout << "Ошибка (pos > _size)\n";
+        return;
+    }
+    if (_size >= _capacity)
+    {
+        size_t new_capacity = (_capacity == 0) ? 1 : static_cast<size_t>(_capacity * _multiplicativeCoef);
+
+        ValueType* new_data = new ValueType[new_capacity];
+
+        for (size_t i = 0; i < pos; ++i)
+        {
+            new_data[i] = _data[i];
+        }
+
+        new_data[pos] = value;
+
+        for (size_t i = pos; i < _size; ++i)
+        {
+            new_data[i + 1] = _data[i];
+        }
+        delete[] _data;
+        _data = new_data;
+        _capacity = new_capacity;
+    }
+    else 
+    {
+        for (size_t i = _size; i > pos; --i)
+        {
+            _data[i] = _data[i - 1];
+        }
+        _data[pos] = value;
+    }
+    ++_size;
+};
+
+void Vector::insert(const ValueType* values, size_t size, size_t pos) // Вставка массива элементов типа ValueType в позицию pos
+{
+    if (pos > _size)
+    {
+        std::cout << "Ошибка (pos > _size)\n";
+        return;
+    }
+    if (size == 0)
+    {
+        return;
+    }
+    if (_size + size >= _capacity)
+    {
+        size_t new_capacity = std::max(_size + size, static_cast<size_t>(_capacity * _multiplicativeCoef));
+
+        ValueType* new_data = new ValueType[new_capacity];
+
+        for (size_t i = 0; i < pos; ++i) // копируем до pos
+        {
+            new_data[i] = _data[i];
+        }
+
+        for (size_t i = 0; i < size; ++i) // вставляем
+        {
+            new_data[pos + i] = values[i];
+        }
+
+        for (size_t i = pos; i < _size; ++i) // копируем после pos до конца
+        {
+            new_data[i + size] = _data[i];
+        }
+        delete[] _data;
+        _data = new_data;
+        _capacity = new_capacity;
+    }
+    else
+    {
+        for (size_t i = pos; i < _size; ++i) // сдвигаем от pos до size
+        {
+            _data[i + size] = _data[i];
+        }
+        for (size_t i = 0; i < size; ++i) // вставляем 
+        {
+            _data[pos + i] = values[i];
+        }
+    }
+    _size += size;
+};
+
+	
+void Vector::insert(const Vector& vector, size_t pos) // Вставка содержимого вектора в позицию pos
+{
+    if (pos > _size)
+    {
+        std::cout << "Ошибка (pos > _size)\n";
+        return;
+    }
+    if (vector.size() == 0)
+    {
+        return;
+    }
+    if (_size + vector.size() >= _capacity)
+    {
+        size_t tmp_size = _size + vector.size(); //tmp_size
+
+        size_t new_capacity = std::max(tmp_size, static_cast<size_t>(_capacity * _multiplicativeCoef));
+
+        ValueType* new_data = new ValueType[new_capacity];
+
+        for (size_t i = 0; i < pos; ++i) // копируем до pos
+        {
+            new_data[i] = _data[i];
+        }
+
+        for (size_t i = 0; i < vector.size(); ++i) // вставляем
+        {
+            new_data[pos + i] = vector._data[i];
+        }
+
+        for (size_t i = pos; i < _size; ++i) // копируем после pos до конца
+        {
+            new_data[i + vector.size()] = _data[i];
+        }
+        delete[] _data;
+        _data = new_data;
+        _capacity = new_capacity;
+
+    }
+    else
+    {
+        for (size_t i = pos; i < _size; ++i) // сдвигаем от pos до size
+        {
+            _data[i + vector.size()] = _data[i];
+        }
+        for (size_t i = 0; i < vector.size(); ++i) // вставляем 
+        {
+            _data[pos + i] = vector._data[i];
+        }
+    }
+    _size += vector.size();
+};
+
+	
+void Vector::popBack() // Удаление с конца
+{
+    if (_size == 0) {return;}
+    --_size;
+};
+	
+void Vector::popFront() // Удаление из начала
+{
+    if (_size == 0) {return;}
+    for (size_t i = 1; i < _size; ++i)
+    {
+        _data[i - 1] = _data[i];
+    }
+    --_size;
+};

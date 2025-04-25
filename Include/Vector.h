@@ -13,6 +13,7 @@ public:
 
     // HELPERS
     void printVec() const;
+    void clear();
     // HELPERS
     /*!
         \note Все конструкторы и операторы присваивания, 
