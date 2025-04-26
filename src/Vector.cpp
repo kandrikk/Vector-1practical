@@ -447,3 +447,99 @@ void Vector::popFront() // Удаление из начала
     }
     --_size;
 };
+
+
+/*!
+    \brief Удалить элемент(ы) из вектора
+    \param pos: позиция начала удаляемого участка
+    \param count: количество удаляемых элементов
+    если (pos + count) > size, то элементы интервала [pos, size) должны быть удалены
+*/
+void Vector::erase(size_t pos, size_t count)
+{
+    if (pos > _size) 
+    {
+        std::cout << "Ошибка (pos > _size)\n";
+        return;
+    }
+    if (count > _size - pos) // количество удаляемых жлементов больше их количества ? уменьшаем count
+    {
+        count = _size - pos;
+    }
+    if (_size == 0) // вектор пуст
+    {
+        return;
+    } 
+
+    for (size_t i = pos; i < _size - count; ++i)
+    {
+        _data[i] = _data[i + count];
+    }
+    _size -= count;
+};
+
+
+/*!
+    \brief Удалить элемент(ы) из вектора
+    \param beginPos: позиция начала удаляемого участка
+    \param endPos: позиция окончания удаляемого участка
+    Все элементы интервала [beginPos, endPos) должны быть удалены:
+        [1, 2, 3, 4] -> erase(1, 3) -> [1, 4]
+    если endPos > size, то элементы интервала [beginPos, size) должны быть удалены
+*/
+void Vector::eraseBetween(size_t beginPos, size_t endPos)
+{
+    if (_size == 0) {return;}
+    if (beginPos > _size || beginPos > endPos)
+    {
+        std::cout << "Ошибка (beginPos > _size || beginPos > endPos)\n";
+        return;
+    }
+    if (endPos > _size)
+    {
+        endPos = _size;
+    }
+    
+    size_t count = endPos - beginPos;
+    for (size_t i = beginPos; i < _size - count; ++i)               // _size 5
+    {                                                                   // begin 1  // endpos 3
+        _data[i] = _data[i + count];                                                                    
+    }                                               
+    _size -= count;                    
+};
+
+
+long long Vector::find(const ValueType& value) const // Поиск первого вхождения значения
+{
+    if (_size == 0) 
+    {
+        std::cout << "Ошибка (_size == 0)\n";
+        return -1;
+    }
+    for (size_t i = 0; i < _size; ++i)
+    {
+        if (_data[i] == value)
+        {
+            return static_cast<long long>(i);
+        }
+    }
+    std::cout << "Элемента нет в векторе\n";
+    return -1;
+};
+
+   
+void Vector::reserve(size_t capacity) // Если capacity > _capacity, то выделить новый участок памяти размером capacity и перенести вектор туда, иначе - ничего
+{
+    if (capacity > _capacity)
+    {
+        ValueType* new_data = new ValueType[capacity];
+        for (size_t i = 0; i < _size; ++i)
+        {
+            new_data[i] = _data[i];
+        }
+        delete[] _data;
+        _data = new_data;
+        _capacity = capacity;
+    }
+    else {return;}
+};
