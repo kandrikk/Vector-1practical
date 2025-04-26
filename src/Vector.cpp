@@ -90,7 +90,7 @@ Vector& Vector::operator=(Vector&& other) noexcept
 {
     if (this != &other)
     {
-        delete[] _data;
+        clear();
 
         _data = other._data;
         _size = other._size;
@@ -182,7 +182,8 @@ Vector::Iterator Vector::end()
 // ======================================================================================================================
 // FUNCTION
 
-void Vector::printVec() const {  // HELPERS Вывод вектора
+void Vector::printVec() const // HELPERS Вывод вектора
+{
     std::cout << "{ ";
     for (size_t i = 0; i < _size; ++i) {  
         std::cout << _data[i];            
@@ -193,7 +194,8 @@ void Vector::printVec() const {  // HELPERS Вывод вектора
     std::cout << " }" << std::endl;       
 }
 
-void Vector::clear() {
+void Vector::clear() 
+{
     delete[] _data;
     _data = nullptr;
     _size = 0;
@@ -222,10 +224,7 @@ void Vector::shrinkToFit() // Уменьшение памяти до size
 
     if (_size == 0)
     {
-        delete[] _data;
-        _data = nullptr;
-        _capacity = 0;
-        return;
+        clear();
     }
 
     ValueType* new_data = new ValueType[_size];
@@ -243,15 +242,13 @@ void Vector::pushBack(const ValueType& value) // Добавление элеме
 {
     if (_size >= _capacity)
     {
-        size_t new_capacity = (_capacity == 0) ? 1 : static_cast<size_t>(_capacity * _multiplicativeCoef);
+        size_t new_capacity = (_capacity == 0) ? 4 : static_cast<size_t>(_capacity * _multiplicativeCoef);
 
         ValueType* new_data = new ValueType[new_capacity];
-        if (_data != nullptr)
+
+        for (size_t i = 0; i < _size; ++i)
         {
-            for (size_t i = 0; i < _size; ++i)
-            {
-                new_data[i] = _data[i];
-            }
+            new_data[i] = _data[i];
         }
         delete[] _data;
         _data = new_data;
@@ -265,16 +262,15 @@ void Vector::pushFront(const ValueType& value) // Добавление элем�
 {
     if (_size >= _capacity)
     {
-        size_t new_capacity = (_capacity == 0) ? 1 : static_cast<size_t>(_capacity * _multiplicativeCoef);
+        size_t new_capacity = (_capacity == 0) ? 4 : static_cast<size_t>(_capacity * _multiplicativeCoef);
 
         ValueType* new_data = new ValueType[new_capacity];
-        if (_data != nullptr)
+
+        for (size_t i = 0; i < _size; ++i)
         {
-            for (size_t i = 0; i < _size; ++i)
-            {
                 new_data[i + 1] = _data[i];
-            }
         }
+        
         delete[] _data;
         _data = new_data;
         _capacity = new_capacity;
@@ -436,14 +432,18 @@ void Vector::popBack() // Удаление из концв
 {
     if (_size == 0)
     {
-        throw std::out_of_range("Cannot pop from empty vector");
+        throw std::out_of_range("Нельзя удалить элемент из пустого вектора.");
     }
     --_size;
 }
 	
 void Vector::popFront() // Удаление из начала
 {
-    if (_size == 0) {throw std::out_of_range("Cannot pop from empty vector");}
+    if (_size == 0) 
+    {
+        throw std::out_of_range("Нельзя удалить элемент из пустого вектора.");
+    }
+    
     for (size_t i = 1; i < _size; ++i)
     {
         _data[i - 1] = _data[i];
