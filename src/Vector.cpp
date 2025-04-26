@@ -432,15 +432,18 @@ void Vector::insert(const Vector& vector, size_t pos) // Вставка соде
 };
 
 	
-void Vector::popBack() // Удаление с конца
+void Vector::popBack() // Удаление из концв
 {
-    if (_size == 0) {return;}
+    if (_size == 0)
+    {
+        throw std::out_of_range("Cannot pop from empty vector");
+    }
     --_size;
-};
+}
 	
 void Vector::popFront() // Удаление из начала
 {
-    if (_size == 0) {return;}
+    if (_size == 0) {throw std::out_of_range("Cannot pop from empty vector");}
     for (size_t i = 1; i < _size; ++i)
     {
         _data[i - 1] = _data[i];
