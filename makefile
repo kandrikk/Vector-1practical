@@ -26,5 +26,5 @@ test: $(TEST_TARGET)
 clean:
 	rm -f $(MAIN_TARGET) $(TEST_TARGET)
 
-.PHONY: all run test clean
+
 

@@ -4,6 +4,8 @@
 Vector::~Vector()
 {
     delete[] _data;
+    _size = 0;
+    _capacity = 0;
 };
 
     //! Конструктор с параметрами
@@ -50,25 +52,23 @@ Vector& Vector::operator=(const Vector& other)
         return *this;
     }
 
-    if (this != &other)
-    {
-        delete[] _data;
-        _size = other._size;
-        _capacity = other._size;
-        _multiplicativeCoef = other._multiplicativeCoef;
 
-        if (_size > 0) 
+    delete[] _data;
+    _size = other._size;
+    _capacity = other._size;
+    _multiplicativeCoef = other._multiplicativeCoef;
+
+    if (_size > 0) 
+    {
+        _data = new ValueType[_size];
+        for (size_t i = 0; i < other._size; ++i)
         {
-            _data = new ValueType[_size];
-            for (size_t i = 0; i < other._size; ++i)
-            {
-                _data[i] = other._data[i];
-            };
-        } 
-        else
-        {
-            _data = nullptr;
+            _data[i] = other._data[i];
         };
+    } 
+    else
+    {
+        _data = nullptr;
     };
     return *this;
 };
@@ -199,7 +199,6 @@ void Vector::clear()
     delete[] _data;
     _data = nullptr;
     _size = 0;
-    _capacity = 0;
 }
 
 size_t Vector::size() const // Количество элементов вектора

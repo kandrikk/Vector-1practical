@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <stdlib.h>
 #include <iostream>
-#include <limits>
 
 using ValueType = double;
 //! \brief Класс, реализующий С++ контейнер vector для типа double
